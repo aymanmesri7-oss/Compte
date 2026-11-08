@@ -1,0 +1,18 @@
+{
+  "name": "kyce-crm",
+  "version": "1.0.0",
+  "description": "CRM des VA avec bot Discord intégré",
+  "main": "index.js",
+  "private": true,
+  "engines": {
+    "node": ">=22.13"
+  },
+  "scripts": {
+    "start": "node --disable-warning=ExperimentalWarning index.js",
+    "test": "node --disable-warning=ExperimentalWarning test.js"
+  },
+  "dependencies": {
+    "discord.js": "^14.16.3",
+    "express": "^4.21.2"
+  }
+}

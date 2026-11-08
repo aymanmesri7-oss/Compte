@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>KYCE · Détail VA</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header class="nav">
+    <a class="brand" href="index.html">KYCE</a>
+    <div class="segmented">
+      <a class="segment" href="index.html">Vue d'ensemble</a>
+      <a class="segment active" href="va.html">VA</a>
+    </div>
+    <span id="status" class="status" role="status"></span>
+  </header>
+
+  <main class="page">
+    <a class="back" href="va.html">‹ VA</a>
+    <h1 id="name" class="large-title">Chargement…</h1>
+
+    <div id="content" hidden>
+      <section class="card">
+        <div class="tile-label">Dernier compte insta posté</div>
+        <div id="last-link" class="last-link-date"></div>
+      </section>
+
+      <section class="tiles tiles-4">
+        <div class="tile"><div class="tile-label">Aujourd'hui</div><div id="today" class="tile-number"></div></div>
+        <div class="tile"><div class="tile-label">Hier</div><div id="yesterday" class="tile-number"></div></div>
+        <div class="tile"><div class="tile-label">Cette semaine</div><div id="week-count" class="tile-number"></div></div>
+        <div class="tile"><div class="tile-label">Total</div><div id="total" class="tile-number"></div></div>
+      </section>
+
+      <section class="card">
+        <h2 class="card-title">Comptes insta par jour, 14 derniers jours</h2>
+        <div class="chart"><canvas id="chart-14" role="img" aria-label="Barres : comptes insta créés par jour sur 14 jours"></canvas></div>
+      </section>
+
+      <section id="links-card" class="card">
+        <h2 class="card-title">Comptes insta</h2>
+        <ul id="links" class="links"></ul>
+        <div class="pagination">
+          <button id="prev" type="button" class="button">‹ Précédent</button>
+          <span id="page-info"></span>
+          <button id="next" type="button" class="button">Suivant ›</button>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.9/dist/chart.umd.min.js"></script>
+  <script src="js/main.js"></script>
+  <script src="js/va-detail.js"></script>
+</body>
+</html>

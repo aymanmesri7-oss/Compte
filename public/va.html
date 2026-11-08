@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>KYCE · VA</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header class="nav">
+    <a class="brand" href="index.html">KYCE</a>
+    <div class="segmented">
+      <a class="segment" href="index.html" data-keep-date>Vue d'ensemble</a>
+      <a class="segment active" href="va.html" data-keep-date>VA</a>
+    </div>
+    <span id="status" class="status" role="status"></span>
+  </header>
+
+  <main class="page">
+    <div class="title-row">
+      <h1 class="large-title">VA</h1>
+      <span id="inactive-chip" class="chip" hidden></span>
+    </div>
+
+    <div id="week" class="week"></div>
+
+    <input id="search" class="search" type="search" placeholder="Rechercher un VA" aria-label="Rechercher un VA par nom" autocomplete="off">
+
+    <div class="card table-card">
+      <table class="table">
+        <thead>
+          <tr>
+            <th data-key="name"><button type="button">VA</button></th>
+            <th data-key="accounts" class="num"><button id="head-accounts" type="button"></button></th>
+            <th data-key="previous" class="num"><button id="head-previous" type="button"></button></th>
+          </tr>
+        </thead>
+        <tbody id="rows"></tbody>
+      </table>
+      <p id="empty" class="empty" hidden></p>
+    </div>
+    <p class="footnote">Nombre de comptes insta créés par VA.</p>
+  </main>
+
+  <script src="js/main.js"></script>
+  <script src="js/va.js"></script>
+</body>
+</html>

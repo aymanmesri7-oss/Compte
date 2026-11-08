@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>KYCE · Vue d'ensemble</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header class="nav">
+    <a class="brand" href="index.html">KYCE</a>
+    <div class="segmented">
+      <a class="segment active" href="index.html" data-keep-date>Vue d'ensemble</a>
+      <a class="segment" href="va.html" data-keep-date>VA</a>
+    </div>
+    <span id="status" class="status" role="status"></span>
+  </header>
+
+  <main class="page">
+    <h1 class="large-title">Vue d'ensemble</h1>
+
+    <div id="week" class="week"></div>
+
+    <section class="tiles">
+      <div class="tile tile-primary">
+        <div id="day-label" class="tile-label"></div>
+        <div id="accounts" class="tile-number">–</div>
+        <div class="tile-hint">comptes insta créés</div>
+      </div>
+      <div class="tile">
+        <div id="previous-label" class="tile-label"></div>
+        <div id="previous" class="tile-number">–</div>
+        <div class="tile-hint">comptes insta créés</div>
+      </div>
+      <div class="tile tile-wide">
+        <div class="tile-label">VA à 0 compte insta</div>
+        <div id="inactive" class="tile-number">–</div>
+        <div id="inactive-hint" class="tile-hint"></div>
+      </div>
+    </section>
+
+    <section id="alert" class="alert" role="alert" hidden>
+      <h2 id="alert-title" class="alert-title"></h2>
+      <ul id="alert-list" class="alert-list"></ul>
+    </section>
+  </main>
+
+  <script src="js/main.js"></script>
+</body>
+</html>
