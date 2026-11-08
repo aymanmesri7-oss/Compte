@@ -1,5 +1,6 @@
 const express = require('express');
 const db = require('../db/database');
+const bot = require('../bot/discord');
 
 const router = express.Router();
 
@@ -12,6 +13,8 @@ function withDay(req, res, next) {
   if (!isValidDay(req.day)) return res.status(400).json({ error: 'Date invalide' });
   next();
 }
+
+router.get('/bot', (req, res) => res.json(bot.getStatus()));
 
 router.get('/stats', withDay, (req, res) => res.json(db.getStats(req.day)));
 

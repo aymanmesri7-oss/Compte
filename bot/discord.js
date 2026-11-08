@@ -3,7 +3,12 @@ const db = require('../db/database');
 
 const LINK_RE = /(?<![\w.\/-])(?:https?:\/\/)?(?:[\w-]+\.)*instagram\.com\/[^\s<>"'`)\]|]+/gi;
 
+// Toutes les 5 minutes, on relit les salons pas encore lus : nouveaux salons, droits ajoutés après coup, erreurs.
+const RETRY_MS = 5 * 60000;
+
 const running = new Set();
+const failures = new Map();
+let client = null;
 
 // Renvoie les liens du texte. "key" identifie le compte, sans les paramètres :
 // le même compte reposté avec un autre ?psln=... reste un doublon.
@@ -20,10 +25,11 @@ function extractLinks(text) {
   });
 }
 
-// Discord affiche les catégories en majuscules même si le nom réel ne l'est pas, d'où la comparaison sans casse.
+// Discord limite une catégorie à 50 salons : on prend toutes celles dont le nom contient CATEGORY_NAME
+// ("SALON PERSO 2", "📸 SALON PERSO"...). Comparaison sans casse, car Discord affiche tout en majuscules.
 function isVaChannel(channel) {
   const category = (process.env.CATEGORY_NAME || 'SALON PERSO').trim().toLowerCase();
-  return channel.type === ChannelType.GuildText && channel.parent?.name.trim().toLowerCase() === category;
+  return channel.type === ChannelType.GuildText && Boolean(channel.parent?.name.toLowerCase().includes(category));
 }
 
 function saveMessage(message, live) {
@@ -70,10 +76,12 @@ async function scrapeChannel(channel) {
       before = page.last().id;
     }
     db.markChannelScraped(channel.id, startedAt);
+    failures.delete(channel.id);
     console.log(`[bot] #${channel.name} : ${added} lien(s) ajouté(s) depuis l'historique`);
   } catch (error) {
-    // Le salon n'est pas marqué comme traité : il sera repris au prochain démarrage.
-    console.error(`[bot] Lecture impossible de #${channel.name} : ${error.message}`);
+    // Le salon n'est pas marqué comme traité : il sera repris au prochain passage.
+    if (!failures.has(channel.id)) console.error(`[bot] Lecture impossible de #${channel.name} : ${error.message}`);
+    failures.set(channel.id, error.message);
   } finally {
     running.delete(channel.id);
   }
@@ -85,7 +93,7 @@ function start() {
     return;
   }
 
-  const client = new Client({
+  client = new Client({
     intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent],
   });
 
@@ -111,8 +119,15 @@ function start() {
     if (!channels.length) {
       console.error(`[bot] Aucun salon dans la catégorie "${process.env.CATEGORY_NAME}" : vérifie CATEGORY_NAME et l'accès du bot.`);
     }
-    for (const channel of channels) await scrapeChannel(channel);
+    // discord.js met les requêtes en file et respecte seul les limites de Discord.
+    await Promise.all(channels.map((channel) => scrapeChannel(channel)));
     console.log('[bot] Historique à jour');
+
+    setInterval(() => {
+      for (const channel of client.channels.cache.values()) {
+        if (isVaChannel(channel) && !db.channelScrapedAt(channel.id)) scrapeChannel(channel);
+      }
+    }, RETRY_MS);
   });
 
   client.login(process.env.DISCORD_TOKEN).catch((error) => {
@@ -121,4 +136,20 @@ function start() {
   });
 }
 
-module.exports = { start, extractLinks, scrapeChannel };
+// Ce que le bot voit vraiment : tous les salons textuels, suivis ou non, lus ou non.
+function getStatus() {
+  const channels = client ? [...client.channels.cache.values()].filter((c) => c.type === ChannelType.GuildText) : [];
+  return {
+    connected: Boolean(client?.isReady()),
+    reading: running.size,
+    channels: channels.map((c) => ({
+      name: c.name,
+      category: c.parent?.name ?? null,
+      watched: isVaChannel(c),
+      read: Boolean(db.channelScrapedAt(c.id)),
+      error: failures.get(c.id) ?? null,
+    })),
+  };
+}
+
+module.exports = { start, extractLinks, scrapeChannel, isVaChannel, getStatus };

@@ -7,7 +7,8 @@ const { Collection } = require('discord.js');
 
 process.env.RAILWAY_VOLUME_MOUNT_PATH = fs.mkdtempSync(path.join(os.tmpdir(), 'kyce-'));
 const db = require('./db/database');
-const { extractLinks, scrapeChannel } = require('./bot/discord');
+const { ChannelType } = require('discord.js');
+const { extractLinks, scrapeChannel, isVaChannel, getStatus } = require('./bot/discord');
 
 (async () => {
   // Extraction des liens
@@ -20,6 +21,16 @@ const { extractLinks, scrapeChannel } = require('./bot/discord');
   assert.deepStrictEqual(extractLinks('Good 💪'), []);
   assert.deepStrictEqual(extractLinks('https://notinstagram.com/x https://evil.com/instagram.com/x'), []);
   assert.strictEqual(extractLinks('https://instagram.com/a\nhttps://instagram.com/b').length, 2);
+
+  // Salons suivis : toutes les catégories dont le nom contient "SALON PERSO"
+  const inCategory = (name, type = ChannelType.GuildText) => isVaChannel({ type, parent: name === null ? null : { name } });
+  assert.strictEqual(inCategory('SALON PERSO'), true);
+  assert.strictEqual(inCategory('salon perso 2'), true);
+  assert.strictEqual(inCategory('📸 | SALON PERSO'), true);
+  assert.strictEqual(inCategory('GÉNÉRAL'), false);
+  assert.strictEqual(inCategory(null), false);
+  assert.strictEqual(inCategory('SALON PERSO', ChannelType.GuildVoice), false);
+  assert.deepStrictEqual(getStatus(), { connected: false, reading: 0, channels: [] });
 
   // Historique : tous les messages lus, doublon ignoré, la première publication est conservée
   const now = Date.now();

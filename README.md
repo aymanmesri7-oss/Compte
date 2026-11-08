@@ -60,7 +60,7 @@ CATEGORY_NAME=SALON PERSO
 PORT=3000
 ```
 
-`CATEGORY_NAME` doit être le nom exact de ta catégorie Discord. Les majuscules n'ont pas d'importance.
+`CATEGORY_NAME` est le nom de ta catégorie Discord. Le bot suit toutes les catégories dont le nom le contient, par exemple `SALON PERSO 2`. Les majuscules n'ont pas d'importance.
 
 Si le fichier `.env` n'apparaît pas, active l'affichage des fichiers cachés dans l'Explorateur, ou copie `.env.example` et renomme la copie en `.env`.
 
